@@ -32,8 +32,12 @@ while True:
             launch()
             sleep(1500)
 
-        else:
-            print('STOCKS CLOSED')
+        # else:
+            # print('STOCKS CLOSED')
 
-    else:
-        print('WEEKEND')
+    # else:
+        # print('WEEKEND')
+
+    sleep(1)
+
+#test de git
