@@ -19,31 +19,48 @@ def new_proxy():
 
     # Realiza la petición GET para obtener lista de proxys
     try:
-        response = requests.get(url, timeout=30)
+        response = requests.get(url2, timeout=30)
 
     except:
         response = False
+    # try:
+    #     response = requests.get(url, timeout=30)
+
+    # except:
+    #     response = False
 
     # if response code is 200 ok
     if response and response.status_code == 200:
+        proxys = response.text.split()
         # load json
-        proxys = json.loads(response.text)
+        # proxys = json.loads(response.text)
         
-        for proxy in proxys['data']:
-            proxy_list.append([proxy['ip'] + ':' + proxy['port']])
+        for proxy in proxys:
+            proxy_list.append([proxy])
+        # for proxy in proxys['data']:
+        #     proxy_list.append([proxy['ip'] + ':' + proxy['port']])
 
     if not response or response.status_code != 200:
         # Realiza la petición GET para obtener lista de proxys
         try:
-            response = requests.get(url2, timeout=30)
+            response = requests.get(url, timeout=30)
 
         except:
             response = False
+        # try:
+        #     response = requests.get(url2, timeout=30)
 
-        proxys = response.text.split()
+        # except:
+        #     response = False
+
+        # load json
+        proxys = json.loads(response.text)
+        # proxys = response.text.split()
         
-        for proxy in proxys:
-            proxy_list.append([proxy])
+        for proxy in proxys['data']:
+            proxy_list.append([proxy['ip'] + ':' + proxy['port']])
+        # for proxy in proxys:
+        #     proxy_list.append([proxy])
 
     # create open or create csv
     with open(CSV_ROOT + '/proxy/proxy_list.csv', 'w', newline='') as file:
@@ -72,4 +89,4 @@ def get_proxy():
 
     return proxy
 
-new_proxy()
+# new_proxy()

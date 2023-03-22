@@ -23,15 +23,11 @@ while True:
     if weekday >= 1 and weekday <= 5:
 
         # horario de operacion de mercado
-        if hour >= 11 and hour <= 17:
+        if hour >= 10 and hour <= 20:
             print(now)
             launch()
             sleep(1500)
-
-        if hour == 18 and minutes >= 40:
-            launch()
-            sleep(1500)
-
+            
         # else:
             # print('STOCKS CLOSED')
 
