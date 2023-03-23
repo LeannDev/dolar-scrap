@@ -25,13 +25,20 @@ def launch():
             date = datetime.strptime(data['fecha'].replace('/','-'), "%d-%m-%Y - %H:%M")
 
             # /////////// CREAR FORMA DE DETECTAR SI EXISTE DATA DE ESE DIA y ACTUALIZAR O CREAR NUEVA SEGUN CORRESPONDA //////////////
+            if models[i] == 'scrap_dolarturistamodel':
+                compra = float(data['compra'].replace(',','.'))+((75/100)*float(data['compra'].replace(',','.')))
+                venta = float(data['venta'].replace(',','.'))+((75/100)*float(data['venta'].replace(',','.')))
+            else: 
+                compra = float(data['compra'].replace(',','.'))
+                venta = float(data['venta'].replace(',','.'))
+
             scrap_data = {
                 'db': models[i],
                 'date': date.date(),
-                'buy': float(data['compra'].replace(',','.')),
-                'sale': float(data['venta'].replace(',','.')),
+                'buy': compra,
+                'sale': venta,
             }
-
+            
             # search in db
             search_db = search_model(scrap_data)
 
