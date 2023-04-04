@@ -1,8 +1,5 @@
 from db.connect import con
 
-# open cursor
-#cur = con.cursor()
-
 # search model
 def search_model(data):
     cur = con.cursor()
@@ -66,6 +63,5 @@ def update_model(data):
 
     con.commit()
     cur.close()
-    # con.close()
 
     return cur.rowcount

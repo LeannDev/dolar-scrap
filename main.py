@@ -6,6 +6,8 @@ from url import urls, models
 from scrap import scrap_url
 from normalize import normalize_data, compare_new_old_data
 from db.models import search_model, new_model, update_model
+from cripto_dolar.scrap import get_cripto_dolar
+from db.cripto_model import search_cripto_model, new_cripto_model, update_cripto_model
 
 # Define the URL to scrape
 
@@ -28,7 +30,7 @@ while True:
     # Check if it's a valid day and time to run the scraper
     if now.weekday() in valid_days and start_time <= now_time <= end_time:
 
-        # Run the scraper function
+        # # Run the scraper function
         for url, model in zip(urls, models):
 
             data = scrap_url(url)
@@ -51,6 +53,24 @@ while True:
                 else:
                     new_data_db = new_model(normalized_data)
                     print('NEW DATA IN DB', new_data_db)
+
+    # Cripto dolar scrap
+    cripto_dolar = get_cripto_dolar()
+
+    if cripto_dolar:
+        # search model in db
+        search_cripto_db = search_cripto_model(data='scrap_dolarcriptomodel')
+        print(search_cripto_db)
+
+        if search_cripto_db:
+            # update dolar cripto
+            cripto_update = update_cripto_model(cripto_dolar)
+            print(cripto_update)
+
+        else:
+            # new dolar cripto model
+            new_cripto = new_cripto_model(cripto_dolar)
+            print(new_cripto)
 
                 
     
