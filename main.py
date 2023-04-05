@@ -8,6 +8,9 @@ from normalize import normalize_data, compare_new_old_data
 from db.models import search_model, new_model, update_model
 from cripto_dolar.scrap import get_cripto_dolar
 from db.cripto_model import search_cripto_model, new_cripto_model, update_cripto_model
+from cripto_currency.currency import currencys, fiats, dbs
+from cripto_currency.scap import get_cripto
+from db.currency_model import search_currency_model, update_currency_model, new_currency_model
 
 # Define the URL to scrape
 
@@ -72,7 +75,39 @@ while True:
             new_cripto = new_cripto_model(cripto_dolar)
             print(new_cripto)
 
-                
+    # Cripto currency scrap
+    for currency, db in zip(currencys, dbs):
+    
+        # Determine fiat currency based on the current currency
+        if currency == 'DAI' or currency == 'USDT' or currency == 'USDC' or currency == 'DOGE':
+            fiat = fiats[1]
+        else:
+            fiat = fiats[0]
+
+        # Create a data object with currency, fiat, and database info
+        data = {
+            'currency': currency,
+            'fiat': fiat,
+            'db': db,
+        }
+
+        # Call get_cripto function with the data object to retrieve current currency information
+        get_currency = get_cripto(data)
+
+        data['compra'] = get_currency['compra']
+
+        if get_currency:
+            # Search for currency in the database
+            search_currency = search_currency_model(data)
+
+            if search_currency:
+                # Update currency in the database
+                update = update_currency_model(data)
+
+            else:
+                # Insert new currency into the database
+                new = new_currency_model(data)
+
     
     # Wait for 30 minutes before running again
     sleep(1800)  # 30 minutes in seconds

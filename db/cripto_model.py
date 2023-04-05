@@ -29,14 +29,14 @@ def new_cripto_model(data):
     try:
         query = """
             INSERT INTO {table} 
-            (compra, venta)
-            VALUES (%s, %s)
+            (compra, venta, id)
+            VALUES (%s, %s, %s)
         """
 
         table_name = 'scrap_dolarcriptomodel'
 
         cur.execute(
-            query.format(table=table_name),(data['venta'], data['compra'])
+            query.format(table=table_name),(data['venta'], data['compra'], 1)
         ) 
 
     except:
