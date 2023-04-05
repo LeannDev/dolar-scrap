@@ -11,6 +11,8 @@ from db.cripto_model import search_cripto_model, new_cripto_model, update_cripto
 from cripto_currency.currency import currencys, fiats, dbs
 from cripto_currency.scap import get_cripto
 from db.currency_model import search_currency_model, update_currency_model, new_currency_model
+from exchanges.scrap import get_exchanges
+from db.exchange_model import search_exchange_model, new_exchange_model, update_exchange_model
 
 # Define the URL to scrape
 
@@ -51,11 +53,44 @@ while True:
                     compare = compare_new_old_data(normalized_data, search_data_db)
                     # update data
                     update = update_model(compare)
-                    print('UPDATE DATA IN DB', update)
 
                 else:
                     new_data_db = new_model(normalized_data)
-                    print('NEW DATA IN DB', new_data_db)
+
+        # Get the dollar exchange rate from local exchanges
+        # Retrieve a dictionary containing data on local exchanges
+        local_exchanges = get_exchanges()
+
+        if local_exchanges:
+            # Loop through each exchange in the data dictionary
+            for exchange in local_exchanges:
+                # Get the values of the exchange rate and transaction fees for the current exchange
+                name = exchange
+                compra = local_exchanges[exchange]['ask']
+                compra_tax = local_exchanges[exchange]['totalAsk']
+
+                venta = local_exchanges[exchange]['bid']
+                venta_tax = local_exchanges[exchange]['totalBid']
+
+                # Create a dictionary containing the exchange data
+                data = {
+                    'db': 'scrap_entidadesmodel',
+                    'nombre': name,
+                    'compra': compra,
+                    'solidario': compra_tax,
+                    'venta': venta_tax,
+                }
+
+                # Check if the exchange data already exists in the database
+                search_exchange = search_exchange_model(data)
+
+                if search_exchange:
+                    # If the exchange data already exists, update the data
+                    update = update_exchange_model(data)
+
+                else:
+                    # If the exchange data does not exist, insert new data
+                    new = new_exchange_model(data)
 
     # Cripto dolar scrap
     cripto_dolar = get_cripto_dolar()
@@ -108,6 +143,5 @@ while True:
                 # Insert new currency into the database
                 new = new_currency_model(data)
 
-    
     # Wait for 30 minutes before running again
     sleep(1800)  # 30 minutes in seconds
