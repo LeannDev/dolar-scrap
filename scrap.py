@@ -25,36 +25,44 @@ def scrap_url(url):
         }
     )
 
-    # Parse the JSON response into a dictionary
-    data = json.loads(response.text)
+    try:
+        # Parse the JSON response into a dictionary
+        data = json.loads(response.text)
+
+    except json.decoder.JSONDecodeError as e:
+        print(f"Error to load JSON: {e.msg}")
+        print(f"line {e.lineno}, column {e.colno}")
+        print(e.doc)
 
     # Wait for 15 seconds to let the scraping job start
     time.sleep(15)
 
-    # Keep checking the status of the job until it finishes
-    while True:
+    if data:
+        # Keep checking the status of the job until it finishes
+        while True:
 
-        response = requests.get(
-            url = data['statusUrl']
-        )
+            response = requests.get(
+                url = data['statusUrl']
+            )
 
-        data = json.loads(response.text)
+            data = json.loads(response.text)
 
-        if data['status'] == 'finished':
+            if data['status'] == 'finished':
 
-            # If the status code of the response is 200, return the scraped content
-            if data['response']['statusCode'] == 200:
+                # If the status code of the response is 200, return the scraped content
+                if data['response']['statusCode'] == 200:
 
-                return data['response']['body']
-            
-            # If the status code is not 200, return None
-            else:
+                    return data['response']['body']
                 
-                return None
-            
-        else:
+                # If the status code is not 200, return None
+                else:
+                    
+                    return None
+                
+            else:
 
-            time.sleep(20)
+                time.sleep(20)
 
-    # This line will never be reached, but it's included for completeness
-    return None
+    else:
+        # This line will never be reached, but it's included for completeness
+        return None
